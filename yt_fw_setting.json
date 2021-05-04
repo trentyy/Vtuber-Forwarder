@@ -1,0 +1,102 @@
+{
+    "BOX_MEMBER_ID" :{
+        "_proproduction": "UCIMyj16adW8WSZo9nzMgfDA",
+        "kadukimikuru": "UCo5pboqAxtr5gOFSDBGD09w",
+        "yumesakimia": "UCc5bWVuWyL74ngKNjm49hdw",
+        "amachiroru": "UCOfuarJ9_C5OAD0mGS7KCyg",
+        "sakuraisumi": "UCIClNlvEUvEqLe_rs_i8h_w",
+        "umitukiyuru": "UCMMnAFarbXqv6SEImoANlAQ",
+        "koinoya_mai": "UCgttI8QfdWhvd3SRtCYcJzw",
+        "hanakumo_rin": "UCPdKdMpXlmwcGdfiUTNusfg"
+
+    },
+    "UCIMyj16adW8WSZo9nzMgfDA": {
+        "name": "proproduction",
+        "title": "【公式】プロプロプロダクション",
+        "dc_role": "785051702176645130", 
+        "yt_fw_ch": "839109026092285952",
+        "nickname": "公式羊 The sheep:",
+        "embed_color": 16777215
+    },
+    "UCo5pboqAxtr5gOFSDBGD09w": {
+        "name": "mikuru",
+        "title": "kaduki mikuruCh.華月みくる / プロプロ",
+        "dc_role": "782624351676923945", 
+        "yt_fw_ch": "839109026092285952",
+        "nickname": "みくる",
+        "embed_color": 14575727
+    },
+    "UCc5bWVuWyL74ngKNjm49hdw": {
+        "name": "mia",
+        "title": "yumesaki miaCh.夢咲ミア / プロプロ",
+        "dc_role": "782623972344463412", 
+        "yt_fw_ch": "839109026092285952",
+        "nickname": "ミア",
+        "embed_color": 16496125
+    },
+    "UCOfuarJ9_C5OAD0mGS7KCyg": {
+        "name": "chiroru",
+        "title": "Amanohoshi chiroruCh.甘ノ星ちろる / プロプロ",
+        "dc_role": "782624609882079250", 
+        "yt_fw_ch": "839109026092285952",
+        "nickname": "ちろる",
+        "embed_color": 16248703
+
+    },
+    "UCIClNlvEUvEqLe_rs_i8h_w": {
+        "name": "isumi",
+        "title": "sakura isumiCh.朔桜 衣澄 / プロプロ",
+        "dc_role": "782624818280661012", 
+        "yt_fw_ch": "839109026092285952",
+        "nickname": "衣澄",
+        "embed_color": 10763455
+    },
+    "UCMMnAFarbXqv6SEImoANlAQ": {
+        "name": "yuru",
+        "title": "umituki yuruCh.海月ゆる / プロプロ",
+        "yt_fw_ch": "786315909232197652",
+        "dc_role": "839109026092285952", 
+        "nickname": "ゆる",
+        "embed_color": 9564155
+    },
+    "UCgttI8QfdWhvd3SRtCYcJzw": {
+        "name": "mai",
+        "title": "koinoya maiCh.恋乃夜まい / プロプロ",
+        "dc_role": "817743717217206273",
+        "yt_fw_ch": "817754243616342039",
+        "nickname": "まい",
+        "embed_color": 9583988
+    },
+    "UCPdKdMpXlmwcGdfiUTNusfg": {
+        "name": "rin",
+        "title": "hanakumo rinCh.花雲 りん / プロプロ",
+        "dc_role": "817743846514884649",
+        "yt_fw_ch": "817754243616342039",
+        "nickname": "りん",
+        "embed_color": 14932942
+    },
+    "UC4SUl-nTftCcl3t7NKPd0_Q": {
+        "name": "aoi",
+        "title": "shirose aoiCh.白瀬 あおい / プロプロ",
+        "dc_role": "830013401413058580",
+        "yt_fw_ch": "817754243616342039",
+        "nickname": "あおい",
+        "embed_color": 14932942
+    },
+    "UCPcsJUA8PhOy3c4y1Q1eu3g": {
+        "name": "momoa",
+        "title": "ikoi momoaCh.憩居ももあ / プロプロ",
+        "dc_role": "830013399181688892",
+        "yt_fw_ch": "817754243616342039",
+        "nickname": "ももあ",
+        "embed_color": 14932942
+    },
+    "UCpNu3ngL8XHyQ0-T5I8dB2g": {
+        "name": "azusa",
+        "title": "sakuya azusaCh.咲夜あずさ / プロプロ",
+        "dc_role": "838320351175245835",
+        "yt_fw_ch": "817754243616342039",
+        "nickname": "あずさ",
+        "embed_color": 14932942
+    }
+}

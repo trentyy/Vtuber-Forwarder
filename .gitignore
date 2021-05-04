@@ -112,3 +112,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+yt_api.json
+twitter_api.json
+setting.json

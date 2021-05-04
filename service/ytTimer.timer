@@ -1,0 +1,10 @@
+[Unit]
+Description=Run ytTracker every minute
+After=network.target
+
+[Timer]
+OnUnitActiveSec=30min
+Unit=ytTracker.service
+
+[Install]
+WantedBy=multi-user.target

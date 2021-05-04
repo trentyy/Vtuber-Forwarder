@@ -1,0 +1,13 @@
+[Unit]
+Description=Update twitter video status to db
+After=network.target
+
+[Service]
+ExecStart=/home/pi/Github/pyBot/dcBot-env/bin/python twitterTracker.py
+WorkingDirectory=/home/pi/Github/pyBot
+Type=simple
+
+User=pi
+
+[Install]
+WantedBy=multi-user.target
