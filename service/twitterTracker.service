@@ -3,8 +3,8 @@ Description=Update twitter video status to db
 After=network.target
 
 [Service]
-ExecStart=/home/pi/Github/pyBot/dcBot-env/bin/python twitterTracker.py
-WorkingDirectory=/home/pi/Github/pyBot
+ExecStart=/home/pi/Github/Vtuber-Forwarder/env/bin/python twitterTracker.py
+WorkingDirectory=/home/pi/Github/Vtuber-Forwarder
 Type=simple
 
 User=pi

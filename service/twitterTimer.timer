@@ -1,10 +1,10 @@
 [Unit]
-Description=Run twitterTracker every minute
-After=network.target
+Description=Run twitterTracker every 30s
 
 [Timer]
 OnUnitActiveSec=30
 Unit=twitterTracker.service
+OnBootSec=30
 
 [Install]
 WantedBy=multi-user.target
