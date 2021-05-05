@@ -10,7 +10,7 @@ import pymysql
 
 # my module
 from APIs import youtubeAPI
-import ytTracker
+import twitterTracker
 
 DEBUG=False
 DEBUG_HOUR=8
@@ -79,7 +79,7 @@ class TweetForwarder(Cog_Extension):
         self.bot = bot
         self.TARGETS = BOX_MEMBER
         self.count = 0
-        self.twitterTracker = twitterTracker.twitterTracker()
+        self.tracker = twitterTracker.twitterTracker()
         
         async def interval():
             async def forwardMsg(result, target):
@@ -89,11 +89,11 @@ class TweetForwarder(Cog_Extension):
                     ## get information
                     channel = self.bot.get_channel(int(tg['twi_fw_ch']))
                     role = self.guild.get_role(int(tg['dc_role']))
-                    tweetId = tg['id']
+                    tweetId = item['id']
                     username = item['username']
                     nickname = tg['nickname']
                     text = item['text']
-                    tweet_url = t_url + username + "/status/" + tweetId
+                    tweet_url = t_url + username + "/status/" + str(tweetId)
 
                     content = sname = motion = ""
 
@@ -126,9 +126,9 @@ class TweetForwarder(Cog_Extension):
 
                 # get embed message and send to speticular channel
                 for tg in self.TARGETS:
-                    res = self.twitterTracker.loadDataList(
+                    res = self.tracker.loadDataList(
                         select = " * ",
-                        where = "`isForwarded` = 0 AND `username` = " + tg['username'],
+                        where = "`isForwarded` = 0 AND `username` = '" + tg['username']+"'",
                         extra = " ORDER BY `created_at` ASC LIMIT 5"
                     )
                     await forwardMsg(res, tg)

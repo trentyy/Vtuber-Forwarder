@@ -17,7 +17,7 @@ USER=db_setting['user']
 PW=db_setting['password']
 DB=db_setting['database']
 # load data and set variables
-with open('twitter_forward_setting_test.json','r', encoding='utf8') as f:
+with open('twitter_forward_setting.json','r', encoding='utf8') as f:
     t_setting = json.load(f)
     f.close()
 t_url = t_setting['twitter_url']
@@ -74,7 +74,7 @@ class twitterTracker():
             result = self.cur.fetchall()
         except Exception as e:
             time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(time+"\t[Error] \ttwitterTracker.loadDataList while execute sql:")
+            print(time+" [Error]  twitterTracker.loadDataList while execute sql:")
             print(sql)
             raise e
         return result
