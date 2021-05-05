@@ -7,7 +7,7 @@ import pymysql
 # my module
 from APIs import youtubeAPI
 
-DEBUG = False
+DEBUG = True
 
 with open('db_setting.json', 'r') as f:
     db_setting = json.load(f)
@@ -74,7 +74,7 @@ class twitterTracker():
             result = self.cur.fetchall()
         except Exception as e:
             time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            print(time+"\t[Error] \tytTracker.loadDataList while execute sql:")
+            print(time+"\t[Error] \ttwitterTracker.loadDataList while execute sql:")
             print(sql)
             raise e
         return result
@@ -86,7 +86,12 @@ class twitterTracker():
         select=" `created_at`"
         where=" `username` = '" + username + "' "
         latest = self.loadDataList(select=select, where=where)
-        if (DEBUG): print("latest= ", latest['created_at'].strftime('%Y-%m-%d %H:%M:%S'))
+        if (DEBUG): 
+            print(latest)
+            if (len(latest) != 0):
+                print("latest= ", latest[0]['created_at'].strftime('%Y-%m-%d %H:%M:%S'))
+            else:
+                print("latest= None")
 
         start_time = datetime.utcnow() - timedelta(days=1)
         end_time = datetime.utcnow() - timedelta(seconds=15)
@@ -157,18 +162,21 @@ class twitterTracker():
                     channelTitle = item['snippet']['channelTitle']
                     
                     sStartTime = aStartTime = aEndTime = "NULL"
-                    liveSD = item['liveStreamingDetails']
-                    if ('scheduledStartTime' in liveSD.keys()):
-                        sStartTime = isoparse(liveSD['scheduledStartTime']).strftime('%Y-%m-%d %H:%M:%S')
-                    if ('actualStartTime' in liveSD.keys()):
-                        aStartTime = isoparse(liveSD['actualStartTime']).strftime('%Y-%m-%d %H:%M:%S')
-                    if ('actualEndTime' in liveSD.keys()):
-                        aEndTime = isoparse(liveSD['actualEndTime']).strftime('%Y-%m-%d %H:%M:%S')
-                    sql = "INSERT IGNORE INTO `videos` ("+\
-                        "`videoId`, `channel`, `isLiveStreaming`, `isForwarded`, `title`,"+\
-                        " `scheduledStartTime`, `actualStartTime`, `actualEndTime`)"
-                    sql += f"VALUES ('{id}', '{channelId}', '0', '0', '{title}', "+\
-                            f" CAST('{sStartTime}' AS datetime), CAST('{aStartTime}' AS datetime), CAST('{aEndTime}' AS datetime))"
+                    print("parsing item: ", json.dumps(item, ensure_ascii=False, indent=4))
+                    print(item.keys())
+                    if ('liveStreamingDetails' in item.keys()):
+                        liveSD = item['liveStreamingDetails']
+                        if ('scheduledStartTime' in liveSD.keys()):
+                            sStartTime = isoparse(liveSD['scheduledStartTime']).strftime('%Y-%m-%d %H:%M:%S')
+                        if ('actualStartTime' in liveSD.keys()):
+                            aStartTime = isoparse(liveSD['actualStartTime']).strftime('%Y-%m-%d %H:%M:%S')
+                        if ('actualEndTime' in liveSD.keys()):
+                            aEndTime = isoparse(liveSD['actualEndTime']).strftime('%Y-%m-%d %H:%M:%S')
+                        sql = "INSERT IGNORE INTO `videos` ("+\
+                            "`videoId`, `channel`, `isLiveStreaming`, `isForwarded`, `title`,"+\
+                            " `scheduledStartTime`, `actualStartTime`, `actualEndTime`)"
+                        sql += f"VALUES ('{id}', '{channelId}', '0', '0', '{title}', "+\
+                                f" CAST('{sStartTime}' AS datetime), CAST('{aStartTime}' AS datetime), CAST('{aEndTime}' AS datetime))"
                     print(sql)
                     try:
                         cur.execute(sql)
