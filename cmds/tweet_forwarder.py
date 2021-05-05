@@ -99,18 +99,27 @@ class TweetForwarder(Cog_Extension):
 
                     if text[0] == '@':
                         sname = text.split(" ")[0] # subject name
-                        motion = "標註了："
+                        motion = "回覆了："
                         print("is quote")
+                        content = f"{nickname}{motion}{sname}\n"
+                        content += tweet_url
+                        if (sname[1:] not in BOX_MEMBER_ID):
+                            self.reply_ch.send(content)
+                        else:
+                            await channel.send(content)
                     elif text[:3] == "RT ":
                         sname = text[3:].split(":")[0] # subject name
                         motion = "轉推了："
                         print("is retweet")
+                        content = f"{role.mention}{nickname}{motion}{sname}\n"
+                        content += tweet_url
+                        await channel.send(content)
                     else:
                         motion = "tweet: "
                         print("is retweet")
-                    content = f"{role.mention}{nickname}{motion}{sname}\n"
-                    content += tweet_url
-                    await channel.send(content)
+                        content = f"{role.mention}{nickname}{motion}{sname}\n"
+                        content += tweet_url
+                        await channel.send(content)
 
                     try:
                         self.tracker.setForwardedTweet(tweetId)
