@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: May 05, 2021 at 07:45 AM
+-- Generation Time: May 05, 2021 at 08:08 AM
 -- Server version: 8.0.18
 -- PHP Version: 7.3.11
 
@@ -21,6 +21,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `propro_guild`
 --
+CREATE DATABASE IF NOT EXISTS `propro_guild` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `propro_guild`;
 
 -- --------------------------------------------------------
 
