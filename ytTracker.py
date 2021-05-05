@@ -38,7 +38,8 @@ class ytTracker():
             cursorclass=pymysql.cursors.DictCursor)
         self.cur = self.db.cursor()
     def closeDB(self):
-        self.db.close()
+        return self.db.close()
+
     def task(self, do_times, sleep_seconds, doSearchList=True):
         self.connectDB()
         if (doSearchList):
@@ -63,19 +64,25 @@ class ytTracker():
             time.sleep(sleep_seconds)
         # finish task successfully
         self.closeDB()
-    def loadDataList(self, select="videoId", type="waiting"):
-        # type: waiting, live, completed
-        sql = f"SELECT {select} FROM `videos` WHERE `isForwarded` = 0 AND "+\
-              "`scheduledStartTime` IS NOT NULL AND "
-        if (type=="waiting"):
-            sql += "(`actualStartTime` IS NULL OR `actualEndTime` IS NULL);"
-        elif (type=="live"):
-            sql += "(`actualStartTime` IS NOT NULL AND `actualEndTime` IS NULL);"
-        elif (type=="completed"):
-            sql += "(`actualStartTime` IS NOT NULL AND `actualEndTime` IS NOT NULL);"
+    def loadDataList(self, select="videoId", stream_type="waiting", request_forward_List=False):
+        # stream_type: waiting, live, completed
+        self.connectDB()
+        sql = f"SELECT {select} FROM `videos` WHERE `isForwarded` = 0 AND "
+        if request_forward_List:
+            sql += "(`scheduledStartTime` IS NULL OR (`actualStartTime` IS NOT NULL AND `actualEndTime` IS NULL));"
         else:
-            print("type is not in [waiting, live, completed]")
-            sql += "(`actualStartTime` IS NULL OR `actualEndTime` IS NULL);"
+            if (stream_type=="waiting"):
+                sql += "`scheduledStartTime` IS NOT NULL AND "
+                sql += "(`actualStartTime` IS NULL OR `actualEndTime` IS NULL);"
+            elif (stream_type=="live"):
+                sql += "`scheduledStartTime` IS NOT NULL AND "
+                sql += "(`actualStartTime` IS NOT NULL AND `actualEndTime` IS NULL);"
+            elif (stream_type=="completed"):
+                sql += "`scheduledStartTime` IS NOT NULL AND "
+                sql += "(`actualStartTime` IS NOT NULL AND `actualEndTime` IS NOT NULL);"
+            else:
+                print("stream_type is not in [waiting, live, completed]")
+                sql += "(`actualStartTime` IS NULL OR `actualEndTime` IS NULL);"
         try:
             result_num = self.cur.execute(sql)
             result = self.cur.fetchall()
@@ -84,6 +91,7 @@ class ytTracker():
             print(time+"\t[Error] \tytTracker.loadDataList while execute sql:")
             print(sql)
             raise e
+        self.closeDB()
         return result
     def parseVideoInfo(self, request):
         try:
@@ -123,6 +131,7 @@ class ytTracker():
         return res
     def updateVideoStatus(self, result):
         # videoIds is a list of youtube videoId, use it with api to update
+        self.connectDB()
         if DEBUG: print("updating these video: ", result)
         for item in result:
             videoId = item['videoId']
@@ -144,7 +153,9 @@ class ytTracker():
             sql += " WHERE `videos`.`videoId` = " + "'"+videoId+"'"
             self.cur.execute(sql)
             self.db.commit()
+        self.closeDB()
     def insertVideo(self, videoIds):
+        self.connectDB()
         for videoId in videoIds:
             request = youtubeAPI.Videos(
                 videoId,
@@ -178,13 +189,22 @@ class ytTracker():
                 print(sql)
                 self.connectDB()
             self.db.commit()
-if __name__ == "__main__":
+        self.closeDB()
+    def setForwardedVideo(self, videoId):
+        self.connectDB()
+        sql = f"UPDATE `propro_guild`.`videos` SET `isForwarded`='1' WHERE  `videoId`='{videoId}';"
+        self.cur.execute(sql)
+        self.db.commit()
+        self.closeDB()
+def main():
     tracker = ytTracker()
-    res = tracker.loadDataList(select="videoId, scheduledStartTime", type="completed")
+    res = tracker.loadDataList(select="*", request_forward_List=True)
+    
     tracker.updateVideoStatus(res)
     if DEBUG:
         print(type(res), len(res))
         print(res)
     tracker.task(do_times=29, sleep_seconds=60, doSearchList=True)
-
+if __name__ == "__main__":
+    main()
     

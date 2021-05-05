@@ -67,7 +67,7 @@ class twitterTracker():
                         where=" `isForwarded` = 0 ", 
                         extra=" ORDER BY `created_at` DESC LIMIT 1 "):
         #SELECT * FROM `tweets` WHERE `username` = 'kadukimikuru'
-        sql = f"SELECT {select} FROM `tweets` WHERE {where} {extra}"
+        sql = f"SELECT {select} FROM `tweets` WHERE {where} {extra};"
         
         try:
             result_num = self.cur.execute(sql)
@@ -128,7 +128,7 @@ class twitterTracker():
                 print("url=\t", url)
             time.sleep(5)
         return res
-    def parseTweet(self, tweets, username):
+    def insertTweet(self, tweets, username):
         for i in range(tweets['meta']['result_count']):
             data = tweets['data'][i]
 
@@ -196,6 +196,11 @@ class twitterTracker():
                 db.commit()
                 if (DEBUG): print("commit")
             db.close()
+    def setForwardedTweet(self, tweetId):
+        self.connectDB()
+        sql = f"UPDATE `propro_guild`.`tweets` SET `isForwarded`='1' WHERE  `id`='{tweetId}';"
+        self.cur.execute(sql)
+        self.db.commit()
 def main():
     tracker = twitterTracker()
     for tg in tracker.TARGETS:
@@ -207,7 +212,7 @@ def main():
             continue
         tweets = res.json()
         #print(json.dumps(tweets, ensure_ascii=False, indent=4))
-        tracker.parseTweet(tweets, tg['username'])
+        tracker.insertTweet(tweets, tg['username'])
         time.sleep(1)
 if __name__ == "__main__":
     main()
