@@ -110,7 +110,7 @@ class ytTracker():
 
         res['channelId'] = channelId
         res['title'] = title
-        res['publishedAt'] = "'"+publishedAt.strftime('%Y-%m-%d %H:%M:%S')+"'"
+        res['publishedAt'] = publishedAt.strftime('%Y-%m-%d %H:%M:%S')
         res['scheduledStartTime'] = "NULL"
         res['actualStartTime'] = "NULL"
         res['actualEndTime'] = "NULL"
@@ -119,15 +119,15 @@ class ytTracker():
             liveSD = item['liveStreamingDetails']
             if ('scheduledStartTime' in liveSD.keys()):
                 sStartTime = isoparse(liveSD['scheduledStartTime'])
-                sStartTime = "'"+sStartTime.strftime('%Y-%m-%d %H:%M:%S')+"'"
+                sStartTime = sStartTime.strftime('%Y-%m-%d %H:%M:%S')
                 res['scheduledStartTime'] = sStartTime
             if ('actualStartTime' in liveSD.keys()):
                 aStartTime = isoparse(liveSD['actualStartTime'])
-                aStartTime = "'"+aStartTime.strftime('%Y-%m-%d %H:%M:%S')+"'"
+                aStartTime = aStartTime.strftime('%Y-%m-%d %H:%M:%S')
                 res['actualStartTime'] = aStartTime
             if ('actualEndTime' in liveSD.keys()):
                 aEndTime = isoparse(liveSD['actualEndTime'])
-                aEndTime = "'"+aEndTime.strftime('%Y-%m-%d %H:%M:%S')+"'"
+                aEndTime = aEndTime.strftime('%Y-%m-%d %H:%M:%S')
                 res['actualEndTime'] = aEndTime
         return res
     def updateVideoStatus(self, result):
@@ -146,12 +146,21 @@ class ytTracker():
                 continue
             res = self.parseVideoInfo(res)
             
-            sql =   "UPDATE `videos` SET "
-            sql += " `publishedAt` = " + res['publishedAt']
+            if res['publishedAt'] != "NULL":
+                res['publishedAt'] = "'" + res['publishedAt'] + "'"
+            if res['scheduledStartTime'] != "NULL":
+                res['scheduledStartTime'] = "'" + res['scheduledStartTime'] + "'"
+            if res['actualStartTime'] != "NULL":
+                res['actualStartTime'] = "'" + res['scheduledStartTime'] + "'"
+            if res['actualEndTime'] != "NULL":
+                res['actualEndTime'] = "'" + res['actualEndTime'] + "'"
+            sql =   "UPDATE `videos` SET `channelId` = '" + res['channelId'] + "'"
+            sql += ", `title` = '" + res['title'] + "'"
+            sql += ", `publishedAt` = " + res['publishedAt']
             sql += ", `scheduledStartTime` = " + res['scheduledStartTime']
             sql += ", `actualStartTime` = " + res['actualStartTime']
             sql += ", `actualEndTime` = " + res['actualEndTime']
-            sql += " WHERE `videos`.`videoId` = " + "'"+videoId+"'"
+            sql += " WHERE `videos`.`videoId` = '" +videoId + "'"
             self.cur.execute(sql)
             self.db.commit()
         self.db.close()
@@ -187,12 +196,12 @@ class ytTracker():
             if ("'" in res['title']):
                 res['title'] = res['title'].replace("'", "'"*2)
             sql =   "INSERT IGNORE INTO `videos` ("+\
-                    "`videoId`, `channel`, `isForwarded`, `title`,"+\
+                    "`videoId`, `channelId`, `isForwarded`, `title`,"+\
                     " `publishedAt`,"+\
                     " `scheduledStartTime`, `actualStartTime`, `actualEndTime`)"
             sql +=  f"VALUES ('{videoId}', '{res['channelId']}', '0', '{res['title']}', "+\
-                    f" CAST({res['publishedAt']} AS datetime), "+\
-                    f" CAST({sStartTime} AS datetime), CAST({aStartTime} AS datetime), CAST({aEndTime} AS datetime))"
+                    f" CAST('{res['publishedAt']}' AS datetime), "+\
+                    f" CAST('{sStartTime}' AS datetime), CAST('{aStartTime}' AS datetime), CAST('{aEndTime}' AS datetime))"
             try:
                 self.cur.execute(sql)
             except pymysql.err.ProgrammingError as e:

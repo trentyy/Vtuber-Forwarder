@@ -161,9 +161,9 @@ class twitterTracker():
                     time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     print(time+"\t[Error] \twhile adding tweet to db:")
                     print(sql)
-                db.commit()
+                self.db.commit()
                 if (DEBUG): print("commit")
-            db.close()
+            self.db.close()
     def setForwardedTweet(self, tweetId):
         self.connectDB()
         sql = f"UPDATE `propro_guild`.`tweets` SET `isForwarded`='1' WHERE  `id`='{tweetId}';"
