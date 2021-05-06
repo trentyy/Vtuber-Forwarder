@@ -70,7 +70,7 @@ class TweetForwarder(Cog_Extension):
     @commands.command()
     async def set_start_time(self, ctx, time):
         try:
-            self.last_ed_t = dt.datetime.fromisoformat(time)
+            self.last_ed_t = datetime.fromisoformat(time)
             print("Start time set to: ", self.last_ed_t)
             await ctx.send(f"Start time set to: {self.last_ed_t}")
         except Exception as e:
@@ -131,7 +131,7 @@ class TweetForwarder(Cog_Extension):
             await self.default_setting(bot)
             while not self.bot.is_closed():
                 self.count += 1
-                now = dt.datetime.now()
+                now = datetime.now()
 
                 # get embed message and send to speticular channel
                 for tg in self.TARGETS:
