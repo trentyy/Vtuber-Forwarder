@@ -6,7 +6,7 @@ import pymysql
 
 # my module
 from APIs import youtubeAPI
-
+import ytTracker
 DEBUG = True
 
 with open('db_setting.json', 'r') as f:
@@ -53,22 +53,20 @@ class twitterTracker():
         with open('db_setting.json', 'r') as f:
             db_setting = json.load(f)
             f.close()
-        self.connectDB()
     def connectDB(self, host=HOST, user=USER,
                     password=PW, database=DB):
         self.db = pymysql.connect(
             host=host, user=user, password=password, db=database,
             cursorclass=pymysql.cursors.DictCursor)
         self.cur = self.db.cursor()
-    def closeDB(self):
-        self.db.close()
     def loadDataList(self, 
                         select="id", 
                         where=" `isForwarded` = 0 ", 
                         extra=" ORDER BY `created_at` DESC LIMIT 1 "):
+        self.connectDB()
         #SELECT * FROM `tweets` WHERE `username` = 'kadukimikuru'
         sql = f"SELECT {select} FROM `tweets` WHERE {where} {extra};"
-        
+        print(sql)
         try:
             result_num = self.cur.execute(sql)
             result = self.cur.fetchall()
@@ -77,6 +75,7 @@ class twitterTracker():
             print(time+" [Error]  twitterTracker.loadDataList while execute sql:")
             print(sql)
             raise e
+        self.db.close()
         return result
     def get_tweets(self, target:dict):
         with open('twitter_api.json', 'r', encoding='utf8') as f:
@@ -135,11 +134,9 @@ class twitterTracker():
             tweet_url = t_url + username + '/status/' + data['id']
             created_at = data['created_at'].replace("T"," ")[:-1]
             # deal with database
-            db = pymysql.connect(host=HOST, user=USER, password=PW, db=DB,
-                    cursorclass=pymysql.cursors.DictCursor)
+            self.connectDB()
             sql = "SELECT `id` FROM `tweets` WHERE `id`='"+str(data['id'])+"'"
-            cur = db.cursor()
-            is_found = cur.execute(sql)
+            is_found = self.cur.execute(sql)
             if (is_found):
                 if (DEBUG): print(data['id'], "already saved to db")
                 continue
@@ -154,41 +151,12 @@ class twitterTracker():
                 if (id==None):
                     id = "NULL" 
                 else:
-                    # check youtube video information
-                    res = youtubeAPI.Videos(id)
-                    item = res['items'][0]
-                    channelId = item['snippet']['channelId']
-                    title = item['snippet']['title']
-                    channelTitle = item['snippet']['channelTitle']
-                    
-                    sStartTime = aStartTime = aEndTime = "NULL"
-                    print("parsing item: ", json.dumps(item, ensure_ascii=False, indent=4))
-                    print(item.keys())
-                    if ('liveStreamingDetails' in item.keys()):
-                        liveSD = item['liveStreamingDetails']
-                        if ('scheduledStartTime' in liveSD.keys()):
-                            sStartTime = isoparse(liveSD['scheduledStartTime']).strftime('%Y-%m-%d %H:%M:%S')
-                        if ('actualStartTime' in liveSD.keys()):
-                            aStartTime = isoparse(liveSD['actualStartTime']).strftime('%Y-%m-%d %H:%M:%S')
-                        if ('actualEndTime' in liveSD.keys()):
-                            aEndTime = isoparse(liveSD['actualEndTime']).strftime('%Y-%m-%d %H:%M:%S')
-                        sql = "INSERT IGNORE INTO `videos` ("+\
-                            "`videoId`, `channel`, `isLiveStreaming`, `isForwarded`, `title`,"+\
-                            " `scheduledStartTime`, `actualStartTime`, `actualEndTime`)"
-                        sql += f"VALUES ('{id}', '{channelId}', '0', '0', '{title}', "+\
-                                f" CAST('{sStartTime}' AS datetime), CAST('{aStartTime}' AS datetime), CAST('{aEndTime}' AS datetime))"
-                    print(sql)
-                    try:
-                        cur.execute(sql)
-                    except Exception as e:
-                        time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                        print(time+"\t[Error] \twhile adding video to db, sql:")
-                        print(sql)
-                    db.commit()
+                    yt_tracker = ytTracker.ytTracker()
+                    yt_tracker.insertVideo([id])
                 sql = "INSERT IGNORE INTO `tweets` (`username`, `created_at`, `text`, `id`, `author_id`, `yt_videoid`) "
                 sql += f"VALUES ('{username}', '{created_at}', '{data['text']}', '{data['id']}', '{data['author_id']}', '{id}')"
                 try:
-                    cur.execute(sql)
+                    self.cur.execute(sql)
                 except Exception as e:
                     time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                     print(time+"\t[Error] \twhile adding tweet to db:")
@@ -201,6 +169,7 @@ class twitterTracker():
         sql = f"UPDATE `propro_guild`.`tweets` SET `isForwarded`='1' WHERE  `id`='{tweetId}';"
         self.cur.execute(sql)
         self.db.commit()
+        self.db.close()
 def main():
     tracker = twitterTracker()
     for tg in tracker.TARGETS:

@@ -37,22 +37,23 @@ class ytTracker():
             host=host, user=user, password=password, db=database,
             cursorclass=pymysql.cursors.DictCursor)
         self.cur = self.db.cursor()
-    def closeDB(self):
-        return self.db.close()
-
     def task(self, do_times, sleep_seconds, doSearchList=True):
         self.connectDB()
         if (doSearchList):
-            res = youtubeAPI.SearchList()
-            videos=[]
-            for item in res['items']:
-                videoId, snippet = item['id']['videoId'], item['snippet']
-                channelId, title, publishedAt = snippet['channelId'], snippet['title'], snippet['publishedAt']
-                liveBroadcastContent = snippet['liveBroadcastContent']
-                videos.append(videoId)
-            if DEBUG: print("videos in task, searchlist: ", videos)
-            self.insertVideo(videos)
-        
+            try:
+                res = youtubeAPI.SearchList()
+                videos=[]
+                for item in res['items']:
+                    videoId, snippet = item['id']['videoId'], item['snippet']
+                    channelId, title, publishedAt = snippet['channelId'], snippet['title'], snippet['publishedAt']
+                    liveBroadcastContent = snippet['liveBroadcastContent']
+                    videos.append(videoId)
+                if DEBUG: print("videos in task, searchlist: ", videos)
+                self.insertVideo(videos)
+            except Exception as e:
+                print("Error while doing youtubeAPI.SearchList(): ", e)
+
+       
         for i in range(do_times):
             # load target video list from database
             db_videos = self.loadDataList()
@@ -63,7 +64,7 @@ class ytTracker():
             # sleep and wait for next run
             time.sleep(sleep_seconds)
         # finish task successfully
-        self.closeDB()
+        self.db.close()
     def loadDataList(self, select="videoId", stream_type="waiting", request_forward_List=False):
         # stream_type: waiting, live, completed
         self.connectDB()
@@ -91,7 +92,7 @@ class ytTracker():
             print(time+"\t[Error] \tytTracker.loadDataList while execute sql:")
             print(sql)
             raise e
-        self.closeDB()
+        self.db.close()
         return result
     def parseVideoInfo(self, request):
         try:
@@ -153,14 +154,24 @@ class ytTracker():
             sql += " WHERE `videos`.`videoId` = " + "'"+videoId+"'"
             self.cur.execute(sql)
             self.db.commit()
-        self.closeDB()
+        self.db.close()
     def insertVideo(self, videoIds):
         self.connectDB()
         for videoId in videoIds:
-            request = youtubeAPI.Videos(
-                videoId,
-                part="snippet,liveStreamingDetails"
-            )
+            try:
+                request = youtubeAPI.Videos(
+                    videoId,
+                    part="snippet,liveStreamingDetails"
+                )
+            except Exception as e:
+                print("Error: failed to use youtube video list api: ", e)
+                print("Force inserting video: ", videoId)
+                sql = f"INSERT IGNORE INTO `videos` (`videoId`) VALUES('{videoId}');"
+                
+                self.cur.execute(sql)
+                self.db.commit()
+                continue
+
             if request['pageInfo']['totalResults']==0:
                 time=datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 print(time+"\tPASS\tCan't find video id: ",videoId)
@@ -188,14 +199,15 @@ class ytTracker():
                 print(e)
                 print(sql)
                 self.connectDB()
+                self.cur.execute(sql)
             self.db.commit()
-        self.closeDB()
+        self.db.close()
     def setForwardedVideo(self, videoId):
         self.connectDB()
         sql = f"UPDATE `propro_guild`.`videos` SET `isForwarded`='1' WHERE  `videoId`='{videoId}';"
         self.cur.execute(sql)
         self.db.commit()
-        self.closeDB()
+        self.db.close()
 def main():
     tracker = ytTracker()
     res = tracker.loadDataList(select="*", request_forward_List=True)

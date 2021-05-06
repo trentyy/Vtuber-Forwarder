@@ -15,7 +15,9 @@ with open('yt_fw_setting.json','r', encoding='utf8') as f:
 y_url = "https://youtu.be/"
 class  ytForwarder(Cog_Extension):
     def isVideo(self, videoInfo):
-        return True if videoInfo['scheduledStartTime']==None else False
+        boolean =   videoInfo['scheduledStartTime']==None and\
+                    videoInfo['channel']!=None
+        return True if boolean else False
             
     def isLive(self, videoInfo):
         boolean =   videoInfo['actualStartTime']!=None and\
@@ -33,6 +35,9 @@ class  ytForwarder(Cog_Extension):
                 for item in result:
                     # forward videos
                     ## get information
+
+                    if (item['channel']==""): continue
+
                     targetInfo = yt_fw_setting[item['channel']]
                     print("getting role: " +targetInfo['dc_role'])
                     role = self.guild.get_role(int(targetInfo['dc_role']))
