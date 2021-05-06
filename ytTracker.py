@@ -61,6 +61,8 @@ class ytTracker():
             # update these video with youtube api
             self.updateVideoStatus(db_videos)
             
+            db_videos = self.loadDataList(stream_type="live")
+            self.updateVideoStatus(db_videos)
             # sleep and wait for next run
             time.sleep(sleep_seconds)
         # finish task successfully
@@ -68,7 +70,7 @@ class ytTracker():
     def loadDataList(self, select="videoId", stream_type="waiting", request_forward_List=False):
         # stream_type: waiting, live, completed
         self.connectDB()
-        sql = f"SELECT {select} FROM `videos` WHERE `isForwarded` = 0 AND "
+        sql = f"SELECT {select} FROM `videos` WHERE `isForwarded` = 0 OR "
         if request_forward_List:
             sql += "(`scheduledStartTime` IS NULL OR (`actualStartTime` IS NOT NULL AND `actualEndTime` IS NULL));"
         else:
@@ -219,12 +221,6 @@ class ytTracker():
         self.db.close()
 def main():
     tracker = ytTracker()
-    res = tracker.loadDataList(select="*", request_forward_List=True)
-    
-    tracker.updateVideoStatus(res)
-    if DEBUG:
-        print(type(res), len(res))
-        print(res)
     tracker.task(do_times=29, sleep_seconds=60, doSearchList=True)
 if __name__ == "__main__":
     main()
