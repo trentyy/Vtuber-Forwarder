@@ -4,7 +4,7 @@ from discord.ext import commands
 from core.classes import Cog_Extension
 import json, asyncio, sys, socket
 import requests, urllib3
-import datetime as dt
+from datetime import datetime, timedelta
 from dateutil.parser import isoparse
 import pymysql
 
