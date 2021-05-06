@@ -59,18 +59,17 @@ class  ytForwarder(Cog_Extension):
 
             await bot.wait_until_ready()
             self.guild =  bot.get_guild(782232756238549032)
-            SLEEP_TIME = 60 # 60 seconds
+            SLEEP_TIME = 30 # 30 seconds
             tracker = self.tracker
 
             while not self.bot.is_closed():
                 tracker.connectDB()
                 res = tracker.loadDataList(select="*",
                     request_forward_List=True)
-                print(res)
+                print(datetime.now().strftime('%Y-%m-%d %H:%M:%S')+" yt_forwarder dealing with: ", res)
                 await forwardMsg(res)
 
                 await asyncio.sleep(SLEEP_TIME)
-                print("sleeping")
 
         self.bg_task = self.bot.loop.create_task(interval())
 def setup(bot):

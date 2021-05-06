@@ -104,7 +104,7 @@ class TweetForwarder(Cog_Extension):
                         content = f"{nickname}{motion}{sname}\n"
                         content += tweet_url
                         if (sname[1:] not in BOX_MEMBER_ID):
-                            self.reply_ch.send(content)
+                            await self.reply_ch.send(content)
                         else:
                             await channel.send(content)
                     elif text[:3] == "RT ":
@@ -140,6 +140,7 @@ class TweetForwarder(Cog_Extension):
                         where = "`isForwarded` = 0 AND `username` = '" + tg['username']+"'",
                         extra = " ORDER BY `created_at` ASC LIMIT 5"
                     )
+                    print(datetime.now().strftime('%Y-%m-%d %H:%M:%S')+" twitter forwarder dealing with: ", res)
                     await forwardMsg(res, tg)
                     await asyncio.sleep(0.2)
 
