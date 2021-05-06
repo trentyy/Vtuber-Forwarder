@@ -13,7 +13,7 @@ from APIs import youtubeAPI
 import twitterTracker
 
 DEBUG=False
-DEBUG_HOUR=8
+DEBUG_HOUR=0
 if DEBUG: DEBUG_HOUR=3
 
 # load data and set variables
@@ -31,18 +31,18 @@ USER=db_setting['user']
 PW=db_setting['password']
 DB=db_setting['database']
 # gen1 with staff
-proproduction = twitter_setting['proproduction']
-mikuru = twitter_setting['mikuru']
-mia = twitter_setting['mia']
-chiroru = twitter_setting['chiroru']
-isumi = twitter_setting['isumi']
-yuru = twitter_setting['yuru']
+proproduction = twitter_setting['_proproduction']
+mikuru = twitter_setting['kadukimikuru']
+mia = twitter_setting['yumesakimia']
+chiroru = twitter_setting['amachiroru']
+isumi = twitter_setting['sakuraisumi']
+yuru = twitter_setting['umitukiyuru']
 # gen2
-mai = twitter_setting['mai']
-rin = twitter_setting['rin']
-aoi = twitter_setting['aoi']
-momoa = twitter_setting['momoa']
-azusa = twitter_setting['azusa']
+mai = twitter_setting['koinoya_mai']
+rin = twitter_setting['hanakumo_rin']
+aoi = twitter_setting['shiroseaoi']
+momoa = twitter_setting['ikoimomoa']
+azusa = twitter_setting['sakuya_azusa']
 
 BOX_MEMBER = (proproduction, 
         mikuru, mia, chiroru, isumi, yuru, 
@@ -50,7 +50,7 @@ BOX_MEMBER = (proproduction,
 TARGETS_GEN1 = mikuru, mia, chiroru, isumi, yuru
 TARGETS_GEN2 = mai, rin, aoi, momoa, azusa      # here is TARGETS list
 BOX_MEMBER_ID = [x['id'] for x in BOX_MEMBER]
-SLEEP_TIME = 60
+SLEEP_TIME = 15
 
 with open('twitter_api.json', mode='r', encoding='utf8') as jfile:
     jdata = json.load(jfile)
@@ -68,30 +68,30 @@ class TweetForwarder(Cog_Extension):
             self.TARGETS = TARGETS_GEN2
             await ctx.send('tweet_forwarder set target to gen2')
     @commands.command()
-    async def set_start_time(self, ctx, time):
-        try:
-            self.last_ed_t = datetime.fromisoformat(time)
-            print("Start time set to: ", self.last_ed_t)
-            await ctx.send(f"Start time set to: {self.last_ed_t}")
-        except Exception as e:
-            await ctx.send(e)
+    async def tweet_forwarder_loop_count(self, ctx):
+        msg = f"Tweet Forwarder loop counts : {self.count}"
+        print("Command response: ", msg)
+        await ctx.send(msg)
     def __init__(self, bot):
         self.bot = bot
         self.TARGETS = BOX_MEMBER
         self.count = 0
         self.tracker = twitterTracker.twitterTracker()
-        
+        twi_set = twitter_setting 
         async def interval():
-            async def forwardMsg(result, target):
+            async def forwardMsg(result):
                 if (len(res)==0): return
                 for item in result:
                     # forward tweets
                     ## get information
-                    channel = self.bot.get_channel(int(tg['twi_fw_ch']))
-                    role = self.guild.get_role(int(tg['dc_role']))
-                    tweetId = item['id']
                     username = item['username']
-                    nickname = tg['nickname']
+                    print("username= ", username)
+                    target = twi_set[username]
+                    print("target= ", target)
+                    channel = self.bot.get_channel(int(target['twi_fw_ch']))
+                    role = self.guild.get_role(int(target['dc_role']))
+                    tweetId = item['id']
+                    nickname = target['nickname']
                     text = item['text']
                     tweet_url = t_url + username + "/status/" + str(tweetId)
 
@@ -126,7 +126,7 @@ class TweetForwarder(Cog_Extension):
                     except Exception as e:
                         print("Error when setForwardedTweet:", e)
                         raise(e)
-                        
+                    await asyncio.sleep(0.2)
 
             await self.default_setting(bot)
             while not self.bot.is_closed():
@@ -134,15 +134,13 @@ class TweetForwarder(Cog_Extension):
                 now = datetime.now()
 
                 # get embed message and send to speticular channel
-                for tg in self.TARGETS:
-                    res = self.tracker.loadDataList(
-                        select = " * ",
-                        where = "`isForwarded` = 0 AND `username` = '" + tg['username']+"'",
-                        extra = " ORDER BY `created_at` ASC LIMIT 5"
-                    )
-                    print(datetime.now().strftime('%Y-%m-%d %H:%M:%S')+" twitter forwarder dealing with: ", res)
-                    await forwardMsg(res, tg)
-                    await asyncio.sleep(0.2)
+                res = self.tracker.loadDataList(
+                    select = " * ",
+                    where = "`isForwarded` = 0",
+                    extra = " ORDER BY `created_at` ASC LIMIT 5"
+                )
+                print(now.strftime('%Y-%m-%d %H:%M:%S')+" twitter forwarder dealing with: ", res)
+                await forwardMsg(res)
 
                 # wait
                 await asyncio.sleep(SLEEP_TIME) # unit: second

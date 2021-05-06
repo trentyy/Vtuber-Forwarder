@@ -18,24 +18,26 @@ PW=db_setting['password']
 DB=db_setting['database']
 # load data and set variables
 with open('twitter_forward_setting.json','r', encoding='utf8') as f:
-    t_setting = json.load(f)
+    twitter_setting = json.load(f)
     f.close()
-t_url = t_setting['twitter_url']
-twitter_icon_url = t_setting['twitter_icon_url']
+t_url = twitter_setting['twitter_url']
+twitter_icon_url = twitter_setting['twitter_icon_url']
+
 
 # gen1 with staff
-proproduction = t_setting['proproduction']
-mikuru = t_setting['mikuru']
-mia = t_setting['mia']
-chiroru = t_setting['chiroru']
-isumi = t_setting['isumi']
-yuru = t_setting['yuru']
+proproduction = twitter_setting['_proproduction']
+mikuru = twitter_setting['kadukimikuru']
+mia = twitter_setting['yumesakimia']
+chiroru = twitter_setting['amachiroru']
+isumi = twitter_setting['sakuraisumi']
+yuru = twitter_setting['umitukiyuru']
 # gen2
-mai = t_setting['mai']
-rin = t_setting['rin']
-aoi = t_setting['aoi']
-momoa = t_setting['momoa']
-azusa = t_setting['azusa']
+mai = twitter_setting['koinoya_mai']
+rin = twitter_setting['hanakumo_rin']
+aoi = twitter_setting['shiroseaoi']
+momoa = twitter_setting['ikoimomoa']
+azusa = twitter_setting['sakuya_azusa']
+
 BOX_MEMBER = (
     proproduction, 
     mikuru, mia, chiroru, isumi, yuru, 

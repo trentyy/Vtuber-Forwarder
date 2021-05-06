@@ -16,7 +16,7 @@ y_url = "https://youtu.be/"
 class  ytForwarder(Cog_Extension):
     def isVideo(self, videoInfo):
         boolean =   videoInfo['scheduledStartTime']==None and\
-                    videoInfo['channel']!=None
+                    videoInfo['channelId']!=None
         return True if boolean else False
             
     def isLive(self, videoInfo):
@@ -24,10 +24,15 @@ class  ytForwarder(Cog_Extension):
                     videoInfo['actualEndTime']==None
         return True if boolean else False
 
-
+    @commands.command()
+    async def yt_forwarder_loop_count(self, ctx):
+        msg = f"YouTube Forwarder loop counts: {self.count}"
+        print("Command response: ", msg)
+        await ctx.send(msg)
 
     def __init__(self, bot):
         self.bot = bot
+        self.count = 0
         self.tracker = ytTracker.ytTracker()
         async def interval():
             async def forwardMsg(result):
@@ -36,9 +41,9 @@ class  ytForwarder(Cog_Extension):
                     # forward videos
                     ## get information
 
-                    if (item['channel']==""): continue
+                    if (item['channelId']==""): continue
 
-                    targetInfo = yt_fw_setting[item['channel']]
+                    targetInfo = yt_fw_setting[item['channelId']]
                     print("getting role: " +targetInfo['dc_role'])
                     role = self.guild.get_role(int(targetInfo['dc_role']))
                     print("get role=", str(role))
@@ -64,14 +69,17 @@ class  ytForwarder(Cog_Extension):
 
             await bot.wait_until_ready()
             self.guild =  bot.get_guild(782232756238549032)
-            SLEEP_TIME = 30 # 30 seconds
+            SLEEP_TIME = 15 # 15 seconds
             tracker = self.tracker
 
             while not self.bot.is_closed():
-                tracker.connectDB()
+                self.count += 1
+                now = datetime.now()
+                
+                
                 res = tracker.loadDataList(select="*",
                     request_forward_List=True)
-                print(datetime.now().strftime('%Y-%m-%d %H:%M:%S')+" yt_forwarder dealing with: ", res)
+                print(now.strftime('%Y-%m-%d %H:%M:%S')+" yt_forwarder dealing with: ", res)
                 await forwardMsg(res)
 
                 await asyncio.sleep(SLEEP_TIME)
