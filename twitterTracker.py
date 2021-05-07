@@ -146,7 +146,10 @@ class twitterTracker():
                     if ('urls' in data['entities'].keys()):
                         for item in data['entities']['urls']:
                             if ("youtu.be/" in item['expanded_url']):
-                                id= item['expanded_url'].split("youtu.be/")[-1]
+                                id = item['expanded_url'].split("youtu.be/")[-1]
+                                if (DEBUG): print("id detect: ", id)
+                            elif ("/watch?v=" in item['expanded_url']):
+                                id = item['expanded_url'].split("/watch?v=")[-1]
                                 if (DEBUG): print("id detect: ", id)
                 if (id==None):
                     id = "NULL" 
