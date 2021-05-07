@@ -3,7 +3,7 @@
     "dc_ch_id_reply": 782232918512107542,
     "twitter_url": "https://twitter.com/",
     "twitter_icon_url": "https://pbs.twimg.com/profile_images/1308010958862905345/-SGZioPb_400x400.jpg",
-    "proproduction": {
+    "_proproduction": {
         "id": "1283683570758737921",
         "username": "_proproduction",
         "name": "【公式】プロプロプロダクション",
@@ -13,7 +13,7 @@
         "nickname": "公式羊 The sheep:",
         "embed_color": 16777215
     },
-    "mikuru": {
+    "kadukimikuru": {
         "id": "1305447572874514432",
         "username": "kadukimikuru",
         "name": "華月みくる🌕💫プロプロ1期生",
@@ -23,7 +23,7 @@
         "nickname": "みくるちゃん",
         "embed_color": 14575727
     },
-    "mia": {
+    "yumesakimia": {
         "id": "1304127298178670592",
         "username": "yumesakimia",
         "name": "夢咲ミア🌙🍽プロプロ1期生",
@@ -33,7 +33,7 @@
         "nickname": "ミアちゃん",
         "embed_color": 16496125
     },
-    "chiroru": {
+    "amachiroru": {
         "id": "1306912591868907522",
         "username": "amachiroru",
         "name": "甘ノ星ちろる🍬🧚‍♀️ プロプロ一期生",
@@ -44,7 +44,7 @@
         "embed_color": 16248703
 
     },
-    "isumi": {
+    "sakuraisumi": {
         "id": "1315911834642202625",
         "username": "sakuraisumi",
         "name": "朔桜 衣澄💘🦇プロプロ１期生",
@@ -54,7 +54,7 @@
         "nickname": "衣澄ちゃん",
         "embed_color": 10763455
     },
-    "yuru": {
+    "umitukiyuru": {
         "id": "1318518648856743937",
         "username": "umitukiyuru",
         "name": "海月ゆる🎐🌙プロプロ一期生",
@@ -64,7 +64,7 @@
         "nickname": "ゆるちゃん",
         "embed_color": 9564155
     },
-    "mai": {
+    "koinoya_mai": {
         "id": "1361877309846740994",
         "username": "koinoya_mai",
         "name": "恋乃夜まい / プロプロ２期生",
@@ -74,7 +74,7 @@
         "nickname": "まいちゃん",
         "embed_color": 9583988
     },
-    "rin": {
+    "hanakumo_rin": {
         "id": "1366308732070621187",
         "username": "hanakumo_rin",
         "name": "花雲 りん / プロプロ2期生",
@@ -84,7 +84,7 @@
         "nickname": "りんちゃん",
         "embed_color": 14932942
     },
-    "aoi": {
+    "shiroseaoi": {
         "id": "1379045806053806083",
         "username": "shiroseaoi",
         "name": "白瀬 あおい／プロプロ２期生",
@@ -94,7 +94,7 @@
         "nickname": "あおいちゃん",
         "embed_color": 14932942
     },
-    "momoa": {
+    "ikoimomoa": {
         "id": "1379051454300741632",
         "username": "ikoimomoa",
         "name": "憩居ももあ／プロプロ2期生",
@@ -104,7 +104,7 @@
         "nickname": "ももあちゃん",
         "embed_color": 14932942
     },
-    "azusa": {
+    "sakuya_azusa": {
         "id": "1388437493142364161",
         "username": "sakuya_azusa",
         "name": "咲夜あずさ/プロプロ２期生",

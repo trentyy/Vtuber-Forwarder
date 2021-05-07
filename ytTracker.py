@@ -48,6 +48,7 @@ class ytTracker():
                     channelId, title, publishedAt = snippet['channelId'], snippet['title'], snippet['publishedAt']
                     liveBroadcastContent = snippet['liveBroadcastContent']
                     videos.append(videoId)
+                print("searchlist: ", res)
                 if DEBUG: print("videos in task, searchlist: ", videos)
                 self.insertVideo(videos)
             except Exception as e:
@@ -72,6 +73,7 @@ class ytTracker():
         self.connectDB()
         sql = f"SELECT {select} FROM `videos` WHERE `isForwarded` = 0 OR "
         if request_forward_List:
+            sql = f"SELECT {select} FROM `videos` WHERE `isForwarded` = 0 AND "
             sql += "(`scheduledStartTime` IS NULL OR (`actualStartTime` IS NOT NULL AND `actualEndTime` IS NULL));"
         else:
             if (stream_type=="waiting"):
@@ -153,7 +155,7 @@ class ytTracker():
             if res['scheduledStartTime'] != "NULL":
                 res['scheduledStartTime'] = "'" + res['scheduledStartTime'] + "'"
             if res['actualStartTime'] != "NULL":
-                res['actualStartTime'] = "'" + res['scheduledStartTime'] + "'"
+                res['actualStartTime'] = "'" + res['actualStartTime'] + "'"
             if res['actualEndTime'] != "NULL":
                 res['actualEndTime'] = "'" + res['actualEndTime'] + "'"
             sql =   "UPDATE `videos` SET `channelId` = '" + res['channelId'] + "'"
