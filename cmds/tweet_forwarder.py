@@ -128,11 +128,11 @@ class TweetForwarder(Cog_Extension):
                             print("Error when setForwardedTweet:", e)
                             raise(e)
                         await asyncio.sleep(0.2)
-                    except Exception as e:
-                        print("Error when forwardMsg:", e)
-                        msg = f"{self.developer_role.mention} Error tweet_forwarder when forwardMsg {e}"
-                        await self.debug_ch.send(msg)
-                        raise(a)
+                except Exception as e:
+                    print("Error when forwardMsg:", e)
+                    msg = f"{self.developer_role.mention} Error tweet_forwarder when forwardMsg {e}"
+                    await self.debug_ch.send(msg)
+                    raise(a)
             await self.default_setting(bot)
             while not self.bot.is_closed():
                 self.count += 1
