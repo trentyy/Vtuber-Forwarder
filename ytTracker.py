@@ -215,6 +215,12 @@ class ytTracker():
                 self.cur.execute(sql)
             self.db.commit()
         self.db.close()
+    def execute(self, sql):
+        self.connectDB()
+        self.cur.execute(sql)
+        res = self.cur.fetchall()
+        self.closeDB()
+        return res
     def setForwardedVideo(self, videoId):
         self.connectDB()
         sql = f"UPDATE `propro_guild`.`videos` SET `isForwarded`='1' WHERE  `videoId`='{videoId}';"
