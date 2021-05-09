@@ -37,6 +37,8 @@ class ytTracker():
             host=host, user=user, password=password, db=database,
             cursorclass=pymysql.cursors.DictCursor)
         self.cur = self.db.cursor()
+    def closeDB(self):
+        return self.db.close()
     def task(self, do_times, sleep_seconds, doSearchList=True):
         self.connectDB()
         if (doSearchList):
