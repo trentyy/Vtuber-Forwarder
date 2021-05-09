@@ -81,53 +81,58 @@ class TweetForwarder(Cog_Extension):
         async def interval():
             async def forwardMsg(result):
                 if (len(res)==0): return
-                for item in result:
-                    # forward tweets
-                    ## get information
-                    username = item['username']
-                    print("username= ", username)
-                    target = twi_set[username]
-                    print("target= ", target)
-                    channel = self.bot.get_channel(int(target['twi_fw_ch']))
-                    role = self.guild.get_role(int(target['dc_role']))
-                    tweetId = item['id']
-                    nickname = target['nickname']
-                    text = item['text']
-                    tweet_url = t_url + username + "/status/" + str(tweetId)
+                try:
+                    for item in result:
+                        # forward tweets
+                        ## get information
+                        username = item['username']
+                        print("username= ", username)
+                        target = twi_set[username]
+                        print("target= ", target)
+                        channel = self.bot.get_channel(int(target['twi_fw_ch']))
+                        role = self.guild.get_role(int(target['dc_role']))
+                        tweetId = item['id']
+                        nickname = target['nickname']
+                        text = item['text']
+                        tweet_url = t_url + username + "/status/" + str(tweetId)
 
-                    content = sname = motion = ""
+                        content = sname = motion = ""
 
-                    if text[0] == '@':
-                        sname = text.split(" ")[0] # subject name
-                        motion = "回覆了："
-                        print("is quote")
-                        content = f"{nickname}{motion}{sname}\n"
-                        content += tweet_url
-                        if (sname[1:] not in BOX_MEMBER_ID):
-                            await self.reply_ch.send(content)
-                        else:
+                        if text[0] == '@':
+                            sname = text.split(" ")[0] # subject name
+                            motion = "回覆了："
+                            print("is quote")
+                            content = f"{nickname}{motion}{sname}\n"
+                            content += tweet_url
+                            if (sname[1:] not in BOX_MEMBER_ID):
+                                await self.reply_ch.send(content)
+                            else:
+                                await channel.send(content)
+                        elif text[:3] == "RT ":
+                            sname = text[3:].split(":")[0] # subject name
+                            motion = "轉推了："
+                            print("is retweet")
+                            content = f"{role.mention}{nickname}{motion}{sname}\n"
+                            content += tweet_url
                             await channel.send(content)
-                    elif text[:3] == "RT ":
-                        sname = text[3:].split(":")[0] # subject name
-                        motion = "轉推了："
-                        print("is retweet")
-                        content = f"{role.mention}{nickname}{motion}{sname}\n"
-                        content += tweet_url
-                        await channel.send(content)
-                    else:
-                        motion = "tweet: "
-                        print("is retweet")
-                        content = f"{role.mention}{nickname}{motion}{sname}\n"
-                        content += tweet_url
-                        await channel.send(content)
+                        else:
+                            motion = "tweet: "
+                            print("is retweet")
+                            content = f"{role.mention}{nickname}{motion}{sname}\n"
+                            content += tweet_url
+                            await channel.send(content)
 
-                    try:
-                        self.tracker.setForwardedTweet(tweetId)
+                        try:
+                            self.tracker.setForwardedTweet(tweetId)
+                        except Exception as e:
+                            print("Error when setForwardedTweet:", e)
+                            raise(e)
+                        await asyncio.sleep(0.2)
                     except Exception as e:
-                        print("Error when setForwardedTweet:", e)
-                        raise(e)
-                    await asyncio.sleep(0.2)
-
+                        print("Error when forwardMsg:", e)
+                        msg = f"{self.developer_role.mention} Error tweet_forwarder when forwardMsg {e}"
+                        await self.debug_ch.send(msg)
+                        raise(a)
             await self.default_setting(bot)
             while not self.bot.is_closed():
                 self.count += 1
@@ -152,6 +157,7 @@ class TweetForwarder(Cog_Extension):
         self.guild =  bot.get_guild(782232756238549032)
         print("TweetForwarder: working at guild=", self.guild)
         self.debug_ch = self.bot.get_channel(782232918512107542)
+        self.developer_role = self.guild.get_role(785503910818218025)
         
         self.reply_ch = self.bot.get_channel(twitter_setting['dc_ch_id_reply'])
 
