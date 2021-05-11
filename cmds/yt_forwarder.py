@@ -81,7 +81,6 @@ class  ytForwarder(Cog_Extension):
                     request_forward_List=True)
                 print(now.strftime('%Y-%m-%d %H:%M:%S')+" yt_forwarder dealing with: ", res)
                 await forwardMsg(res)
-
                 await asyncio.sleep(SLEEP_TIME)
 
         self.bg_task = self.bot.loop.create_task(interval())

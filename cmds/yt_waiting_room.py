@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import discord
 from discord.ext import commands
 from core.classes import Cog_Extension
@@ -50,8 +51,13 @@ class  ytWaitingRoom(Cog_Extension):
         yt_head_url = "https://www.youtube.com/watch?v="
 
         if (len(videosDictList)==0):
-            await msg.edit(content=content + time_str + no_result,embed=None)
+            try:
+                await msg.edit(content=content + time_str + no_result,embed=None)
+            except Exception as e:
+                err_content = traceback.format_exc()
+                await self.ch_err.send(f"ERR: \n`{err_content}`")
         else:
+            content += time_str
             for item in videosDictList:
                 sStartTime = item['scheduledStartTime'] + timedelta(hours=8)
                 time_str = sStartTime.strftime("%m-%d %H:%M") + " (UTC+8)"
@@ -59,9 +65,12 @@ class  ytWaitingRoom(Cog_Extension):
                 content +=  f"\n> url: {yt_head_url}{videoId}" +\
                             "\n> scheduledStartTime: "+ time_str
         
-            print(content)
-            await msg.edit(content=content,embed=None)
-        #print(f"updateMsg msg_id: {msg.id} to \n{content}")
+            try:
+                await msg.edit(content=content,embed=None)
+            except Exception as e:
+                err_content = traceback.format_exc()
+                await self.ch_err.send(f"ERR: \n`{err_content}`")
+                #print(f"updateMsg msg_id: {msg.id} to \n{content}")
         content = "**YouTube forwarder update at:**"
         content += f"\n ```{time.strftime('%Y/%m/%d %H:%M')}```"
         try:

@@ -1,0 +1,14 @@
+[Unit]
+Description=A discord bot forwarder
+After=network.target
+
+[Service]
+ExecStart=/home/pi/Github/Vtuber-Forwarder/env/bin/python bot.py
+WorkingDirectory=/home/pi/Github/Vtuber-Forwarder
+Type=simple
+
+User=pi
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
