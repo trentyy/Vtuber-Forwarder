@@ -40,7 +40,6 @@ class ytTracker():
     def closeDB(self):
         return self.db.close()
     def task(self, do_times, sleep_seconds, doSearchList=True):
-        self.connectDB()
         if (doSearchList):
             try:
                 res = youtubeAPI.SearchList()
@@ -68,8 +67,6 @@ class ytTracker():
             self.updateVideoStatus(db_videos)
             # sleep and wait for next run
             time.sleep(sleep_seconds)
-        # finish task successfully
-        self.db.close()
     def loadDataList(self, select="videoId", stream_type="waiting", request_forward_List=False):
         # stream_type: waiting, live, completed
         self.connectDB()
