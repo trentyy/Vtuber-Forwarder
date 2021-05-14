@@ -49,7 +49,7 @@ BOX_MEMBER = (proproduction,
         mai, rin, aoi, momoa, azusa)
 TARGETS_GEN1 = mikuru, mia, chiroru, isumi, yuru
 TARGETS_GEN2 = mai, rin, aoi, momoa, azusa      # here is TARGETS list
-BOX_MEMBER_ID = [x['id'] for x in BOX_MEMBER]
+BOX_MEMBER_ID = [x['username'] for x in BOX_MEMBER]
 SLEEP_TIME = 15
 
 with open('twitter_api.json', mode='r', encoding='utf8') as jfile:
