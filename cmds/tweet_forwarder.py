@@ -46,7 +46,7 @@ azusa = twitter_setting['sakuya_azusa']
 
 BOX_MEMBER = (proproduction, 
         mikuru, mia, chiroru, isumi, yuru, 
-        mai, rin, aoi, momoa)
+        mai, rin, aoi, momoa, azusa)
 TARGETS_GEN1 = mikuru, mia, chiroru, isumi, yuru
 TARGETS_GEN2 = mai, rin, aoi, momoa, azusa      # here is TARGETS list
 BOX_MEMBER_ID = [x['id'] for x in BOX_MEMBER]
