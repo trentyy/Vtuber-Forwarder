@@ -73,20 +73,22 @@ class ytTracker():
         sql = f"SELECT {select} FROM `videos` WHERE `isForwarded` = 0 OR "
         if request_forward_List:
             sql = f"SELECT {select} FROM `videos` WHERE `isForwarded` = 0 AND "
-            sql += "(`scheduledStartTime` IS NULL OR (`actualStartTime` IS NOT NULL AND `actualEndTime` IS NULL));"
+            sql += "(`scheduledStartTime` IS NULL OR (`actualStartTime` IS NOT NULL AND `actualEndTime` IS NULL))"
         else:
             if (stream_type=="waiting"):
                 sql += "`scheduledStartTime` IS NOT NULL AND "
-                sql += "(`actualStartTime` IS NULL OR `actualEndTime` IS NULL);"
+                sql += "(`actualStartTime` IS NULL OR `actualEndTime` IS NULL)"
             elif (stream_type=="live"):
                 sql += "`scheduledStartTime` IS NOT NULL AND "
-                sql += "(`actualStartTime` IS NOT NULL AND `actualEndTime` IS NULL);"
+                sql += "(`actualStartTime` IS NOT NULL AND `actualEndTime` IS NULL)"
             elif (stream_type=="completed"):
                 sql += "`scheduledStartTime` IS NOT NULL AND "
-                sql += "(`actualStartTime` IS NOT NULL AND `actualEndTime` IS NOT NULL);"
+                sql += "(`actualStartTime` IS NOT NULL AND `actualEndTime` IS NOT NULL)"
             else:
                 print("stream_type is not in [waiting, live, completed]")
-                sql += "(`actualStartTime` IS NULL OR `actualEndTime` IS NULL);"
+                sql += "(`actualStartTime` IS NULL OR `actualEndTime` IS NULL)"
+        #
+        sql += 'AND `scheduledStartTime` BETWEEN DATE_ADD(NOW(),interval -0 hour) AND DATE_ADD(NOW(),interval -7 hour);'
         try:
             result_num = self.cur.execute(sql)
             result = self.cur.fetchall()
@@ -157,6 +159,9 @@ class ytTracker():
                 res['actualStartTime'] = "'" + res['actualStartTime'] + "'"
             if res['actualEndTime'] != "NULL":
                 res['actualEndTime'] = "'" + res['actualEndTime'] + "'"
+            if ("'" in res['title']):
+                res['title'] = res['title'].replace("'", "'"*2)
+
             sql =   "UPDATE `videos` SET `channelId` = '" + res['channelId'] + "'"
             sql += ", `title` = '" + res['title'] + "'"
             sql += ", `publishedAt` = " + res['publishedAt']
