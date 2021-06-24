@@ -78,6 +78,7 @@ class ytTracker():
             if (stream_type=="waiting"):
                 sql += "`scheduledStartTime` IS NOT NULL AND "
                 sql += "(`actualStartTime` IS NULL OR `actualEndTime` IS NULL)"
+                sql += 'AND `scheduledStartTime` BETWEEN DATE_ADD(NOW(),interval -0 HOUR) AND DATE_ADD(NOW(),interval -450 MINUTE);'
             elif (stream_type=="live"):
                 sql += "`scheduledStartTime` IS NOT NULL AND "
                 sql += "(`actualStartTime` IS NOT NULL AND `actualEndTime` IS NULL)"
@@ -88,10 +89,11 @@ class ytTracker():
                 print("stream_type is not in [waiting, live, completed]")
                 sql += "(`actualStartTime` IS NULL OR `actualEndTime` IS NULL)"
         #
-        sql += 'AND `scheduledStartTime` BETWEEN DATE_ADD(NOW(),interval -0 hour) AND DATE_ADD(NOW(),interval -7 hour);'
+        
         try:
             result_num = self.cur.execute(sql)
             result = self.cur.fetchall()
+            print(result)
         except Exception as e:
             time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             print(time+"\t[Error] \tytTracker.loadDataList while execute sql:")
@@ -233,7 +235,7 @@ class ytTracker():
         self.db.close()
 def main():
     tracker = ytTracker()
-    tracker.task(do_times=29, sleep_seconds=60, doSearchList=True)
+    tracker.task(do_times=59, sleep_seconds=60, doSearchList=True)
 if __name__ == "__main__":
     main()
     
