@@ -39,7 +39,9 @@ class  ytWaitingRoom(Cog_Extension):
             print(live_sql)
             print(e)
         
-        print("updating: ",upcoming_videos, live_videos)
+        print("Updating yt_waiting_room...")
+        print("Upcoming videos:\n", upcoming_videos)
+        print("Live videos: \n", live_videos)
         await self.updateMsg("upcoming", upcoming_videos, self.msg_upcoming)
         await self.updateMsg("live", live_videos, self.msg_live)
     async def updateMsg(self, target_msg: str, videosDictList, msg: discord.Message):
