@@ -91,9 +91,10 @@ class ytTracker():
         #
         
         try:
+            print("ytTracker.loadDataList sql:", sql)
             result_num = self.cur.execute(sql)
             result = self.cur.fetchall()
-            print(result)
+            print("ytTracker.loadDataList sql:", result)
         except Exception as e:
             time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             print(time+"\t[Error] \tytTracker.loadDataList while execute sql:")
