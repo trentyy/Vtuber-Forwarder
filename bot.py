@@ -7,7 +7,9 @@ import datetime as dt
 with open('setting.json', mode='r', encoding='utf8') as jfile:
     jdata = json.load(jfile)
 
-bot = commands.Bot(command_prefix= '>!')
+intents = discord.Intents.all()
+
+bot = commands.Bot(command_prefix= '>|', intents=intents)
 DEBUG = False
 if len(sys.argv) > 1:
     if sys.argv[1] == "DEBUG":
@@ -24,7 +26,7 @@ async def on_ready():
 @bot.command()
 async def load(ctx, extension):
     if ctx.author.guild_permissions.administrator:
-        bot.unload_extension(f'cmds.{extension}')
+        bot.unload_extension(f'cogs.{extension}')
         await ctx.send(f'Loaded extension: {extension}.')
     else:
         msg = "You aren't the `Administrator`"
@@ -33,7 +35,7 @@ async def load(ctx, extension):
 @bot.command()
 async def unload(ctx, extension):
     if ctx.author.guild_permissions.administrator:
-        bot.unload_extension(f'cmds.{extension}')
+        bot.unload_extension(f'cogs.{extension}')
         await ctx.send(f'Unloaded extension: {extension}.')
     else:
         msg = "You aren't the `Administrator`"
@@ -41,16 +43,16 @@ async def unload(ctx, extension):
 @bot.command()
 async def reload(ctx, extension):
     if ctx.author.guild_permissions.administrator:
-        bot.reload_extension(f'cmds.{extension}')
+        bot.reload_extension(f'cogs.{extension}')
         await ctx.send(f'Reloaded extension: {extension}.')
     else:
         msg = "You aren't the `Administrator`"
         await ctx.send(msg)
 
-for filename in os.listdir('./cmds'):
+for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
-        print(f'cmds.{filename[:-3]}')
-        bot.load_extension(f'cmds.{filename[:-3]}')
+        print(f'cogs.{filename[:-3]}')
+        bot.load_extension(f'cogs.{filename[:-3]}')
 
 
 if __name__ == '__main__':
